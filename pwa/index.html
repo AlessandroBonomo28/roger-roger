@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ROGER ROGER</title>
+  <meta name="description" content="Transfer short text over audio, fully client-side.">
+  <meta name="theme-color" content="#0a246a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="titlebar">
+      <img class="app-icon" src="rogericon.jpg" alt="ROGER ROGER icon">
+      <span class="title">ROGER ROGER</span>
+      <span class="ver">v1.0</span>
+    </header>
+
+    <p class="subtitle">Transfer short text over audio, speaker to microphone.</p>
+
+    <div class="note">
+      <strong>This is a web app.</strong> Everything runs locally in your browser
+      (client-side): nothing is uploaded to any server. You can install it to your
+      device from the browser menu and use it offline.
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="generate" role="tab">Generate</button>
+      <button class="tab" data-tab="listen" role="tab">Listen</button>
+    </div>
+
+    <!-- GENERATE -->
+    <section id="generate" class="panel">
+      <fieldset>
+        <legend>MESSAGE</legend>
+        <textarea id="tx-text" maxlength="120" rows="3"
+          placeholder="Type a short message..."></textarea>
+        <div class="muted" id="tx-count">0 / 120 characters</div>
+      </fieldset>
+
+      <div class="row">
+        <button id="tx-btn" class="primary">TRANSMIT</button>
+        <button id="save-btn">SAVE WAV</button>
+        <span class="hint">Turn up the volume so the other device's mic can hear it.</span>
+      </div>
+
+      <div class="main-row">
+        <fieldset class="grow">
+          <legend>WAVEFORM</legend>
+          <canvas id="tx-wave" class="scope"></canvas>
+          <div class="nav">
+            <button id="tx-prev" disabled>Back</button>
+            <span id="tx-seg" class="muted">Generate a message to explore the waveform.</span>
+            <button id="tx-next" disabled>Next</button>
+          </div>
+        </fieldset>
+        <fieldset class="droidwrap">
+          <legend>DROID</legend>
+          <div class="droid"><img id="gen-droid" src="rogericon.jpg" alt="droid status"></div>
+        </fieldset>
+      </div>
+    </section>
+
+    <!-- LISTEN -->
+    <section id="listen" class="panel hidden">
+      <div class="row">
+        <button id="listen-btn" class="primary">LISTEN</button>
+        <span class="hint">Waits for an audio sequence and turns it into text.</span>
+      </div>
+
+      <fieldset>
+        <legend>LIVE SIGNAL</legend>
+        <canvas id="rx-wave" class="scope"></canvas>
+      </fieldset>
+
+      <div class="main-row">
+        <fieldset class="grow">
+          <legend>RECEIVED</legend>
+          <div id="rx-text" class="received"></div>
+        </fieldset>
+        <fieldset class="droidwrap">
+          <legend>DROID</legend>
+          <div class="droid"><img id="rx-droid" src="rogericon.jpg" alt="droid status"></div>
+        </fieldset>
+      </div>
+    </section>
+
+    <footer class="statusbar" id="status">Ready.</footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
