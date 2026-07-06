@@ -9,7 +9,11 @@ The project is themed after the Star Wars battle droids ("Roger, roger").
 
 <img width="220" height="220" alt="success" src="https://github.com/user-attachments/assets/22608786-ec69-45dc-b929-7ec66b199183" />
 
+- **LIVE DEMO**: https://rogeroger.netlify.app/
+
 ## How the algorithm works
+
+<img width="971" height="602" alt="Immagine 2026-07-06 213332" src="https://github.com/user-attachments/assets/d36f6cf9-502d-4fbe-bc3c-522aeaddb71d" />
 
 This is the part that matters most: everything else in this repository exists
 to drive this one audio protocol.
