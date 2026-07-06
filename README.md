@@ -1,13 +1,13 @@
 # ROGER ROGER
 
-<img width="220" height="220" alt="success" src="https://github.com/user-attachments/assets/22608786-ec69-45dc-b929-7ec66b199183" />
-
 Transfer short text between two devices using sound, with no network and no
 server. One device encodes a message into audio tones and plays it through
 its speaker; another device listens on its microphone and decodes the tones
 back into text.
 
 The project is themed after the Star Wars battle droids ("Roger, roger").
+
+<img width="220" height="220" alt="success" src="https://github.com/user-attachments/assets/22608786-ec69-45dc-b929-7ec66b199183" />
 
 ## How the algorithm works
 
