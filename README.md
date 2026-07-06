@@ -32,12 +32,13 @@ that each short burst of sound at a specific pitch stands for a 4-bit value
 3. **Tone assignment.** 16 frequencies are laid out 160 Hz apart, starting at
    1600 Hz (so nibble 0 is 1600 Hz, nibble 1 is 1760 Hz, and so on up to
    nibble 15 at 3999.99 Hz). Two extra frequencies above that range, 4400 Hz
-   and 4800 Hz, are reserved as START and END markers rather than data.
-4. **Building the sequence.** The full symbol sequence is: START, START, then
+   and 4800 Hz, are reserved as sync and END markers rather than data.
+4. **Building the sequence.** The full symbol sequence is: ROGER, ROGER, then
    two symbols per byte (high nibble, low nibble) for every byte of the
-   message plus the checksum byte, then END, END. Doubling the START and END
-   markers makes them far less likely to be mistaken for noise or missed
-   entirely.
+   message plus the checksum byte, then END, END. The 4400 Hz opening marker
+   is labelled ROGER, ROGER (fitting, since it is the app's own greeting) and
+   doubling it, together with the END marker, makes both far less likely to
+   be mistaken for noise or missed entirely.
 5. **Rendering to audio.** Each symbol becomes a 75 ms sine wave burst at its
    assigned frequency, with a short 5 ms fade in/out to avoid audible clicks,
    followed by a 35 ms silent gap before the next tone. Half a second of
@@ -57,7 +58,7 @@ that each short burst of sound at a specific pitch stands for a 4-bit value
 
 The practical consequence of this design: throughput is roughly 4 characters
 per second, messages are capped at 120 characters, and the two ends do not
-need to be clock-synchronized in advance, because the START/END markers and
+need to be clock-synchronized in advance, because the ROGER/END markers and
 the silence gaps between tones let the receiver find its own place in the
 stream at any time. This also means the app is only suited to short text, not
 files: at a few characters per second, anything larger would take far too

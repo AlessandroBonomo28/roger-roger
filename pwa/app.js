@@ -292,7 +292,7 @@ function buildTxView(text, wave, sampleRate) {
   const data = enc.encode(text);
   const hex = (v) => v.toString(16).toUpperCase();
 
-  const symbols = [["S", "#3a6ea5"], ["S", "#3a6ea5"]];
+  const symbols = [["ROGER", "#3a6ea5"], ["ROGER", "#3a6ea5"]];
   for (const b of [...data, checksumOf(data)]) {
     symbols.push([hex((b >> 4) & 0xf), "#2f7d4f"]);
     symbols.push([hex(b & 0xf), "#2f7d4f"]);
@@ -301,7 +301,7 @@ function buildTxView(text, wave, sampleRate) {
 
   const symSpan = (k) => { const a = lead + k * symLen; return [a, a + nTone]; };
 
-  const segs = [["START (sync markers)", 0, 2]];
+  const segs = [["ROGER ROGER (sync markers)", 0, 2]];
   let k = 2;
   for (const ch of text) {
     const nb = enc.encode(ch).length;
