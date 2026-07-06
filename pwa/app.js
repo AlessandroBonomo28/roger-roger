@@ -335,6 +335,7 @@ function setDroid(imgEl, state) {
   if (state === "success") {
     droidTick += 1;
     imgEl.src = "success.gif?" + droidTick; // restart the animation
+    playRoger();
   } else if (state === "fail") {
     imgEl.src = "error.png";
   } else {
@@ -342,8 +343,21 @@ function setDroid(imgEl, state) {
   }
 }
 
+// Confirmation sound + mute preference (persisted across visits).
+const MUTE_KEY = "roger-mute";
+let rogerMuted = localStorage.getItem(MUTE_KEY) === "1";
+const muteChk = $("mute-chk");
+if (muteChk) {
+  muteChk.checked = rogerMuted;
+  muteChk.addEventListener("change", () => {
+    rogerMuted = muteChk.checked;
+    localStorage.setItem(MUTE_KEY, rogerMuted ? "1" : "0");
+  });
+}
+
 const rogerAudio = new Audio("rogerroger.mp3");
 function playRoger() {
+  if (rogerMuted) return;
   try { rogerAudio.currentTime = 0; rogerAudio.play().catch(() => {}); } catch (e) {}
 }
 
@@ -557,7 +571,6 @@ function onReceived(text, ok) {
     setStatus("Message received. Roger roger.");
     rxCaption = '"' + text + '"';
     setDroid(rxDroid, "success");
-    playRoger();
   } else {
     appendReceived("> " + text + "   [checksum error]");
     setStatus("Received with errors: move closer and retry.");

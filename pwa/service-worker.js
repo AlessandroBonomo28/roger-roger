@@ -1,8 +1,9 @@
 // Offline cache for the ROGER ROGER PWA (app shell + assets).
-const CACHE = "roger-roger-v2";
+const CACHE = "roger-roger-v3";
 const ASSETS = [
   "./",
   "index.html",
+  "how-it-works.html",
   "styles.css",
   "app.js",
   "capture-worklet.js",

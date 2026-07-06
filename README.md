@@ -140,6 +140,8 @@ required.
 
 * `pwa/index.html`, `pwa/styles.css`, `pwa/app.js` are the application markup,
   styling, and logic (audio protocol, decoder, waveform navigator, UI).
+* `pwa/how-it-works.html` is an in-app page covering the same algorithm
+  explanation as the section above, linked from the header of the main page.
 * `pwa/capture-worklet.js` is the `AudioWorklet` processor that collects
   microphone samples into fixed-size blocks for the decoder.
 * `pwa/manifest.webmanifest` and `pwa/service-worker.js` make the page
@@ -148,4 +150,8 @@ required.
   screens.
 * `pwa/rogericon.jpg`, `pwa/success.gif`, `pwa/error.png`,
   `pwa/rogerroger.mp3` are the visual and audio assets shown for the idle,
-  successful-decode, and failed-decode states.
+  successful-decode, and failed-decode states. The confirmation sound plays
+  whenever the success image is shown, on either tab, unless muted from the
+  checkbox in the header.
+* The header also links to the project's repository at
+  [github.com/AlessandroBonomo28/roger-roger](https://github.com/AlessandroBonomo28/roger-roger).
