@@ -7,13 +7,13 @@ back into text.
 
 The project is themed after the Star Wars battle droids ("Roger, roger").
 
+- demo video: https://youtube.com/shorts/1Iw6ZS17ShM
+
+- **TRY IT**: https://rogeroger.netlify.app/
+
+## The ROGER ROGER protocol
+
 <img width="220" height="220" alt="success" src="https://github.com/user-attachments/assets/22608786-ec69-45dc-b929-7ec66b199183" />
-
-- **LIVE DEMO**: https://rogeroger.netlify.app/
-
-## How the algorithm works
-
-<img width="971" height="602" alt="Immagine 2026-07-06 213332" src="https://github.com/user-attachments/assets/d36f6cf9-502d-4fbe-bc3c-522aeaddb71d" />
 
 This is the part that matters most: everything else in this repository exists
 to drive this one audio protocol.
@@ -146,6 +146,8 @@ serves the files over HTTPS is enough; no build step or server-side runtime is
 required.
 
 ## Project layout
+
+<img width="971" height="602" alt="Immagine 2026-07-06 213332" src="https://github.com/user-attachments/assets/d36f6cf9-502d-4fbe-bc3c-522aeaddb71d" />
 
 * `pwa/index.html`, `pwa/styles.css`, `pwa/app.js` are the application markup,
   styling, and logic (audio protocol, decoder, waveform navigator, UI).
