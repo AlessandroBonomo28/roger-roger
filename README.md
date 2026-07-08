@@ -31,14 +31,22 @@ that each short burst of sound at a specific pitch stands for a 4-bit value
    one tone per possible nibble value.
 3. **Tone assignment.** 16 frequencies are laid out 160 Hz apart, starting at
    1600 Hz (so nibble 0 is 1600 Hz, nibble 1 is 1760 Hz, and so on up to
-   nibble 15 at 3999.99 Hz). Two extra frequencies above that range, 4400 Hz
-   and 4800 Hz, are reserved as sync and END markers rather than data.
+   nibble 15 at 3999.99 Hz). Three extra frequencies above that range are
+   reserved as control symbols rather than data: 4200 Hz (REPEAT), 4400 Hz
+   (the ROGER sync marker), and 4800 Hz (END).
 4. **Building the sequence.** The full symbol sequence is: ROGER, ROGER, then
    two symbols per byte (high nibble, low nibble) for every byte of the
    message plus the checksum byte, then END, END. The 4400 Hz opening marker
    is labelled ROGER, ROGER (fitting, since it is the app's own greeting) and
    doubling it, together with the END marker, makes both far less likely to
-   be mistaken for noise or missed entirely.
+   be mistaken for noise or missed entirely. One important rule: the same
+   frequency is never transmitted twice in a row. Whenever a nibble equals
+   the previously sent one (the letter "w", 0x77, is a perfect example), the
+   REPEAT symbol is sent in its place, meaning "same nibble again". Two
+   identical consecutive tones would only be separated by the short silent
+   gap, and room echo keeps energy alive at exactly that frequency during the
+   gap, merging the two tones into one on the receiving side. A frequency
+   change survives echo; a silence gap does not.
 5. **Rendering to audio.** Each symbol becomes a 75 ms sine wave burst at its
    assigned frequency, with a short 5 ms fade in/out to avoid audible clicks,
    followed by a 35 ms silent gap before the next tone. Half a second of
@@ -46,15 +54,16 @@ that each short burst of sound at a specific pitch stands for a 4-bit value
    already listening has a clear "nothing is happening yet" reference point.
 6. **Decoding.** The receiver's microphone audio is split into blocks of 512
    samples (about 12 ms each). Every block is analyzed with the Goertzel
-   algorithm, which measures how much energy is present at each of the 18
+   algorithm, which measures how much energy is present at each of the 19
    candidate frequencies without computing a full spectrum, so it is cheap
    enough to run continuously in real time. If one frequency clearly dominates
    the others, that block is classified as that symbol. Several consecutive
    blocks agreeing on the same symbol are collapsed into a single tone
-   (this rejects short noise spikes). Once a symbol sequence closes with END,
-   the nibbles are reassembled into bytes, the trailing checksum byte is
-   compared against a freshly computed XOR of the payload, and the message is
-   accepted or flagged as corrupted.
+   (this rejects short noise spikes). A REPEAT symbol is expanded back into a
+   copy of the nibble before it. Once a symbol sequence closes with END, the
+   nibbles are reassembled into bytes, the trailing checksum byte is compared
+   against a freshly computed XOR of the payload, and the message is accepted
+   or flagged as corrupted.
 
 The practical consequence of this design: throughput is roughly 4 characters
 per second, messages are capped at 120 characters, and the two ends do not

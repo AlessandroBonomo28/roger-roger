@@ -10,10 +10,12 @@ const BASE_FREQ = 1600.0;
 const FREQ_STEP = 160.0;
 const START_FREQ = 4400.0;
 const END_FREQ = 4800.0;
+const REPEAT_FREQ = 4200.0;
 const NIBBLE_FREQS = Array.from({ length: 16 }, (_, i) => BASE_FREQ + i * FREQ_STEP);
-const ALL_FREQS = [...NIBBLE_FREQS, START_FREQ, END_FREQ];
+const ALL_FREQS = [...NIBBLE_FREQS, START_FREQ, END_FREQ, REPEAT_FREQ];
 const IDX_START = 16;
 const IDX_END = 17;
+const IDX_REPEAT = 18;
 const BLOCK = 512;
 const MAX_TEXT = 120;
 const LEAD_SILENCE = 0.5;
@@ -26,13 +28,34 @@ function checksumOf(bytes) {
   return c;
 }
 
+// Nibble stream -> symbol stream. A REPEAT symbol replaces any nibble equal to
+// the previously transmitted one, so the same frequency is never sent twice in
+// a row. Two identical consecutive tones would only be separated by the silent
+// gap, and room echo keeps energy alive at that exact frequency during the
+// gap, merging them into one tone (this is what broke characters like "w",
+// 0x77). A frequency change is robust against echo; silence is not.
+function nibblesToSymbols(data) {
+  const symbols = [];
+  let prev = IDX_START; // after the opening markers
+  for (const b of data) {
+    for (const nib of [(b >> 4) & 0xf, b & 0xf]) {
+      if (nib === prev) {
+        symbols.push(IDX_REPEAT);
+        prev = IDX_REPEAT;
+      } else {
+        symbols.push(nib);
+        prev = nib;
+      }
+    }
+  }
+  return symbols;
+}
+
 // Text -> mono Float32 waveform at the given sample rate.
 function encodeText(text, sampleRate) {
   const data = enc.encode(text);
   const symbols = [IDX_START, IDX_START];
-  for (const b of [...data, checksumOf(data)]) {
-    symbols.push((b >> 4) & 0xf, b & 0xf);
-  }
+  symbols.push(...nibblesToSymbols([...data, checksumOf(data)]));
   symbols.push(IDX_END, IDX_END);
 
   const nTone = Math.floor(sampleRate * TONE_DUR);
@@ -119,7 +142,13 @@ class Decoder {
       if (this.inFrame) this._finish();
       this.reset();
     } else if (this.inFrame) {
-      this.symbols.push(idx);
+      if (idx === IDX_REPEAT) {
+        // REPEAT duplicates the previous nibble; with no previous nibble the
+        // frame is corrupt, and the odd symbol count will invalidate it.
+        if (this.symbols.length) this.symbols.push(this.symbols[this.symbols.length - 1]);
+      } else {
+        this.symbols.push(idx);
+      }
     }
   }
   _finish() {
@@ -293,9 +322,9 @@ function buildTxView(text, wave, sampleRate) {
   const hex = (v) => v.toString(16).toUpperCase();
 
   const symbols = [["ROGER", "#3a6ea5"], ["ROGER", "#3a6ea5"]];
-  for (const b of [...data, checksumOf(data)]) {
-    symbols.push([hex((b >> 4) & 0xf), "#2f7d4f"]);
-    symbols.push([hex(b & 0xf), "#2f7d4f"]);
+  for (const s of nibblesToSymbols([...data, checksumOf(data)])) {
+    if (s === IDX_REPEAT) symbols.push(["R", "#7d5f2f"]);
+    else symbols.push([hex(s), "#2f7d4f"]);
   }
   symbols.push(["E", "#a53a3a"], ["E", "#a53a3a"]);
 
